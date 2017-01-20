@@ -18,6 +18,10 @@
 #include "drw.h"
 #include "util.h"
 
+//additions for dirmenu
+#include <sys/types.h>
+#include <dirent.h>
+
 /* macros */
 #define INTERSECT(x,y,w,h,r)  (MAX(0, MIN((x)+(w),(r).x_org+(r).width)  - MAX((x),(r).x_org)) \
                              * MAX(0, MIN((y)+(h),(r).y_org+(r).height) - MAX((y),(r).y_org)))
@@ -475,6 +479,39 @@ paste(void)
 }
 
 static void
+getDirContent(void)
+{
+	DIR* dirp=opendir(".");
+
+	struct dirent* entry;
+
+	size_t i, imax = 0, size = 0;
+	unsigned int tmpmax = 0;
+
+
+	for(i=0;(entry=readdir(dirp));i++){
+		if (i + 1 >= size / sizeof *items)
+			if (!(items = realloc(items, (size += BUFSIZ))))
+				die("cannot realloc %u bytes:", size);
+		if(!(items[i].text = strdup(entry->d_name)))
+			die("cannot strdup %u bytes:", strlen(entry->d_name) + 1);
+		items[i].out = 0;
+		//don't know what this does, maybe it helps...
+		drw_font_getexts(drw->fonts, entry->d_name, strlen(entry->d_name), &tmpmax, NULL);
+		if (tmpmax > inputw) {
+			inputw = tmpmax;
+			imax = i;
+		}
+	}
+	if (items)
+		items[i].text = NULL;
+	inputw = items ? TEXTW(items[imax].text) : 0;
+	lines = MIN(lines, i);
+
+	closedir(dirp);
+}
+
+static void
 readstdin(void)
 {
 	char buf[sizeof text], *p;
@@ -701,9 +738,11 @@ main(int argc, char *argv[])
 
 	if (fast) {
 		grabkeyboard();
-		readstdin();
+		//readstdin();
+		getDirContent();
 	} else {
-		readstdin();
+		getDirContent();
+		//readstdin();
 		grabkeyboard();
 	}
 	setup();
