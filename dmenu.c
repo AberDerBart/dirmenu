@@ -527,11 +527,12 @@ getDirContent(void)
 				die("cannot strdup %u bytes:", strlen(entry->d_name) + 1);
 
 			//check if file is a directory
-			filePath=malloc(strlen(path)+strlen(entry->d_name)+1);
-			strcpy(filePath,"./");
+			filePath=malloc(strlen(path)+strlen(entry->d_name)+2);
+			strcpy(filePath,path);
+			strcat(filePath,"/");
 			strcat(filePath,entry->d_name);
 			stat(filePath, &fileStat);
-			items[i].dir = ((fileStat.st_mode & S_IFDIR) == S_IFDIR);
+			items[i].dir = S_ISDIR(fileStat.st_mode);
 			free(filePath);
 			
 			items[i].out = 0;
