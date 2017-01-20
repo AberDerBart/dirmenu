@@ -51,6 +51,7 @@ static struct item *matches, *matchend;
 static struct item *prev, *curr, *next, *sel;
 static int mon = -1, screen;
 static char* path=NULL;
+static int showHidden=0;
 
 static Atom clip, utf8;
 static Display *dpy;
@@ -514,9 +515,9 @@ paste(void)
 }
 
 static int
-isHidden(char* file)
+isVisible(char* file)
 {
-	return file[0]=='.' && strcmp(".",file) && strcmp("..", file);
+	return showHidden || file[0]!='.' || !strcmp(".",file) || !strcmp("..", file);
 }
 
 static void
@@ -533,7 +534,7 @@ getDirContent(void)
 	struct stat fileStat;
 
 	for(i=0;(entry=readdir(dirp));i++){
-		if(!isHidden(entry->d_name)){
+		if(isVisible(entry->d_name)){
 			//add file entry
 			if (i + 1 >= size / sizeof *items)
 				if (!(items = realloc(items, (size += BUFSIZ))))
@@ -732,7 +733,7 @@ setup(void)
 static void
 usage(void)
 {
-	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor] [-d directory]\n"
+	fputs("usage: dmenu [-bfivh] [-l lines] [-p prompt] [-fn font] [-m monitor] [-d directory]\n"
 	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-db color] [-df color] [-w windowid]\n", stderr);
 	exit(1);
 }
@@ -752,6 +753,8 @@ main(int argc, char *argv[])
 			topbar = 0;
 		else if (!strcmp(argv[i], "-f"))   /* grabs keyboard before reading stdin */
 			fast = 1;
+		else if (!strcmp(argv[i], "-h"))   /* shows hidden files */
+			showHidden = 1;
 		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 			fstrncmp = strncasecmp;
 			fstrstr = cistrstr;
