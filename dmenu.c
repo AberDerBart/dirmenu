@@ -31,7 +31,7 @@
 #define TEXTW(X)              (drw_fontset_getwidth(drw, (X)) + lrpad)
 
 /* enums */
-enum { SchemeNorm, SchemeSel, SchemeOut, SchemeLast }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeOut, SchemeDir, SchemeLast }; /* color schemes */
 
 struct item {
 	char *text;
@@ -126,6 +126,8 @@ drawitem(struct item *item, int x, int y, int w)
 		drw_setscheme(drw, scheme[SchemeSel]);
 	else if (item->out)
 		drw_setscheme(drw, scheme[SchemeOut]);
+	else if (item->dir)
+		drw_setscheme(drw, scheme[SchemeDir]);
 	else
 		drw_setscheme(drw, scheme[SchemeNorm]);
 
@@ -607,6 +609,7 @@ setup(void)
 	scheme[SchemeNorm] = drw_scm_create(drw, colors[SchemeNorm], 2);
 	scheme[SchemeSel] = drw_scm_create(drw, colors[SchemeSel], 2);
 	scheme[SchemeOut] = drw_scm_create(drw, colors[SchemeOut], 2);
+	scheme[SchemeDir] = drw_scm_create(drw, colors[SchemeDir], 2);
 
 	clip = XInternAtom(dpy, "CLIPBOARD",   False);
 	utf8 = XInternAtom(dpy, "UTF8_STRING", False);
@@ -689,7 +692,7 @@ static void
 usage(void)
 {
 	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
-	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]\n", stderr);
+	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-db color] [-df color] [-w windowid]\n", stderr);
 	exit(1);
 }
 
@@ -730,6 +733,10 @@ main(int argc, char *argv[])
 			colors[SchemeSel][ColBg] = argv[++i];
 		else if (!strcmp(argv[i], "-sf"))  /* selected foreground color */
 			colors[SchemeSel][ColFg] = argv[++i];
+		else if (!strcmp(argv[i], "-db"))  /* selected background color */
+			colors[SchemeDir][ColBg] = argv[++i];
+		else if (!strcmp(argv[i], "-df"))  /* selected foreground color */
+			colors[SchemeDir][ColFg] = argv[++i];
 		else if (!strcmp(argv[i], "-w"))   /* embedding window id */
 			embed = argv[++i];
 		else
