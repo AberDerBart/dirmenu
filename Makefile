@@ -40,7 +40,7 @@ dist: clean
 	@echo creating dist tarball
 	@mkdir -p dirmenu-${VERSION}
 	@cp LICENSE Makefile README arg.h config.def.h config.mk dmenu.1 \
-		drw.h util.h dmenu_path dmenu_run stest.1 ${SRC} \
+		drw.h util.h stest.1 ${SRC} \
 		dirmenu-${VERSION}
 	@tar -cf dirmenu-${VERSION}.tar dirmenu-${VERSION}
 	@gzip dirmenu-${VERSION}.tar
@@ -49,10 +49,8 @@ dist: clean
 install: all
 	@echo installing executables to ${DESTDIR}${PREFIX}/bin
 	@mkdir -p ${DESTDIR}${PREFIX}/bin
-	@cp -f dirmenu dmenu_path dmenu_run stest ${DESTDIR}${PREFIX}/bin
+	@cp -f dirmenu stest ${DESTDIR}${PREFIX}/bin
 	@chmod 755 ${DESTDIR}${PREFIX}/bin/dirmenu
-	@chmod 755 ${DESTDIR}${PREFIX}/bin/dmenu_path
-	@chmod 755 ${DESTDIR}${PREFIX}/bin/dmenu_run
 	@chmod 755 ${DESTDIR}${PREFIX}/bin/stest
 	@echo installing manual pages to ${DESTDIR}${MANPREFIX}/man1
 	@mkdir -p ${DESTDIR}${MANPREFIX}/man1
@@ -64,8 +62,6 @@ install: all
 uninstall:
 	@echo removing executables from ${DESTDIR}${PREFIX}/bin
 	@rm -f ${DESTDIR}${PREFIX}/bin/dirmenu
-	@rm -f ${DESTDIR}${PREFIX}/bin/dmenu_path
-	@rm -f ${DESTDIR}${PREFIX}/bin/dmenu_run
 	@rm -f ${DESTDIR}${PREFIX}/bin/stest
 	@echo removing manual page from ${DESTDIR}${MANPREFIX}/man1
 	@rm -f ${DESTDIR}${MANPREFIX}/man1/dmenu.1
