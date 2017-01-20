@@ -304,10 +304,24 @@ static void getDirContent(void);
 static void
 switchDir(void)
 {
-	char* newPath=malloc(strlen(path)+strlen(text)+2);
-	strcpy(newPath,path);
-	strcat(newPath,"/");
-	strcat(newPath,text);
+	char* newPath;
+	
+	if(!strcmp(text,"~")){
+		char* home=getenv("HOME");
+		if(home){
+			newPath=strdup(home);
+		}else{
+			fprintf(stderr,"$HOME not set.\n");
+			return;
+		}
+	}else if(!strcmp(text,"/")){
+		newPath=strdup("/");
+	}else{
+		newPath=malloc(strlen(path)+strlen(text)+2);
+		strcpy(newPath,path);
+		strcat(newPath,"/");
+		strcat(newPath,text);
+	}
 
 	DIR* newDir=opendir(newPath);
 
@@ -485,8 +499,15 @@ keypress(XKeyEvent *ev)
 		}
 		break;
 	case XK_Tab:
-		if (!sel)
-			return;
+		if (!sel){
+			if(!strcmp(text,"~") || !strcmp(text,"/")){
+				switchDir();
+				match();
+				break;
+			}else{
+				return;
+			}
+		}
 		strncpy(text, sel->text, sizeof text - 1);
 		text[sizeof text - 1] = '\0';
 		cursor = strlen(text);
