@@ -1,3 +1,7 @@
+# project-specific files
+dirmenu
+config.h
+
 # Object files
 *.o
 *.ko
