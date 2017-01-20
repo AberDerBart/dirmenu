@@ -1,4 +1,4 @@
-# dmenu - dynamic menu
+# dirmenu - directory menu
 # See LICENSE file for copyright and license details.
 
 include config.mk
@@ -6,10 +6,10 @@ include config.mk
 SRC = drw.c dmenu.c stest.c util.c
 OBJ = ${SRC:.c=.o}
 
-all: options dmenu stest
+all: options dirmenu stest
 
 options:
-	@echo dmenu build options:
+	@echo dirmenu build options:
 	@echo "CFLAGS   = ${CFLAGS}"
 	@echo "LDFLAGS  = ${LDFLAGS}"
 	@echo "CC       = ${CC}"
@@ -24,7 +24,7 @@ config.h:
 
 ${OBJ}: arg.h config.h config.mk drw.h
 
-dmenu: dmenu.o drw.o util.o
+dirmenu: dmenu.o drw.o util.o
 	@echo CC -o $@
 	@${CC} -o $@ dmenu.o drw.o util.o ${LDFLAGS}
 
@@ -34,23 +34,23 @@ stest: stest.o
 
 clean:
 	@echo cleaning
-	@rm -f dmenu stest ${OBJ} dmenu-${VERSION}.tar.gz
+	@rm -f dirmenu stest ${OBJ} dirmenu-${VERSION}.tar.gz
 
 dist: clean
 	@echo creating dist tarball
-	@mkdir -p dmenu-${VERSION}
+	@mkdir -p dirmenu-${VERSION}
 	@cp LICENSE Makefile README arg.h config.def.h config.mk dmenu.1 \
 		drw.h util.h dmenu_path dmenu_run stest.1 ${SRC} \
-		dmenu-${VERSION}
-	@tar -cf dmenu-${VERSION}.tar dmenu-${VERSION}
-	@gzip dmenu-${VERSION}.tar
-	@rm -rf dmenu-${VERSION}
+		dirmenu-${VERSION}
+	@tar -cf dirmenu-${VERSION}.tar dirmenu-${VERSION}
+	@gzip dirmenu-${VERSION}.tar
+	@rm -rf dirmenu-${VERSION}
 
 install: all
 	@echo installing executables to ${DESTDIR}${PREFIX}/bin
 	@mkdir -p ${DESTDIR}${PREFIX}/bin
-	@cp -f dmenu dmenu_path dmenu_run stest ${DESTDIR}${PREFIX}/bin
-	@chmod 755 ${DESTDIR}${PREFIX}/bin/dmenu
+	@cp -f dirmenu dmenu_path dmenu_run stest ${DESTDIR}${PREFIX}/bin
+	@chmod 755 ${DESTDIR}${PREFIX}/bin/dirmenu
 	@chmod 755 ${DESTDIR}${PREFIX}/bin/dmenu_path
 	@chmod 755 ${DESTDIR}${PREFIX}/bin/dmenu_run
 	@chmod 755 ${DESTDIR}${PREFIX}/bin/stest
@@ -63,7 +63,7 @@ install: all
 
 uninstall:
 	@echo removing executables from ${DESTDIR}${PREFIX}/bin
-	@rm -f ${DESTDIR}${PREFIX}/bin/dmenu
+	@rm -f ${DESTDIR}${PREFIX}/bin/dirmenu
 	@rm -f ${DESTDIR}${PREFIX}/bin/dmenu_path
 	@rm -f ${DESTDIR}${PREFIX}/bin/dmenu_run
 	@rm -f ${DESTDIR}${PREFIX}/bin/stest
