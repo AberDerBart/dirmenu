@@ -298,15 +298,20 @@ nextrune(int inc)
 	return n;
 }
 
+static void getDirContent(void);
+
 static void
 switchDir(void)
 {
-	//printf("%s\n",text);
 	char* newPath=malloc(strlen(path)+strlen(text)+2);
 	strcpy(newPath,path);
 	strcat(newPath,"/");
 	strcat(newPath,text);
-	printf("%s\n",newPath);
+	free(path);
+	path=newPath;
+	getDirContent();
+	text[0]='\0';
+	cursor=0;
 }
 
 static void
