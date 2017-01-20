@@ -485,6 +485,12 @@ paste(void)
 	drawmenu();
 }
 
+static int
+isHidden(char* file)
+{
+	return file[0]=='.' && strcmp(".",file) && strcmp("..", file);
+}
+
 static void
 getDirContent(void)
 {
@@ -499,27 +505,31 @@ getDirContent(void)
 	struct stat fileStat;
 
 	for(i=0;(entry=readdir(dirp));i++){
-		//add file entry
-		if (i + 1 >= size / sizeof *items)
-			if (!(items = realloc(items, (size += BUFSIZ))))
-				die("cannot realloc %u bytes:", size);
-		if(!(items[i].text = strdup(entry->d_name)))
-			die("cannot strdup %u bytes:", strlen(entry->d_name) + 1);
+		if(!isHidden(entry->d_name)){
+			//add file entry
+			if (i + 1 >= size / sizeof *items)
+				if (!(items = realloc(items, (size += BUFSIZ))))
+					die("cannot realloc %u bytes:", size);
+			if(!(items[i].text = strdup(entry->d_name)))
+				die("cannot strdup %u bytes:", strlen(entry->d_name) + 1);
 
-		//check if file is a directory
-		filePath=malloc(strlen(path)+strlen(entry->d_name)+1);
-		strcpy(filePath,"./");
-		strcat(filePath,entry->d_name);
-		stat(filePath, &fileStat);
-		items[i].dir = ((fileStat.st_mode & S_IFDIR) == S_IFDIR);
-		free(filePath);
-		
-		items[i].out = 0;
-		//don't know what this does, maybe it helps...
-		drw_font_getexts(drw->fonts, entry->d_name, strlen(entry->d_name), &tmpmax, NULL);
-		if (tmpmax > inputw) {
-			inputw = tmpmax;
-			imax = i;
+			//check if file is a directory
+			filePath=malloc(strlen(path)+strlen(entry->d_name)+1);
+			strcpy(filePath,"./");
+			strcat(filePath,entry->d_name);
+			stat(filePath, &fileStat);
+			items[i].dir = ((fileStat.st_mode & S_IFDIR) == S_IFDIR);
+			free(filePath);
+			
+			items[i].out = 0;
+			//don't know what this does, maybe it helps...
+			drw_font_getexts(drw->fonts, entry->d_name, strlen(entry->d_name), &tmpmax, NULL);
+			if (tmpmax > inputw) {
+				inputw = tmpmax;
+				imax = i;
+			}
+		}else{
+			i--;
 		}
 	}
 	if (items)
