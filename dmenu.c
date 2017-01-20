@@ -299,6 +299,17 @@ nextrune(int inc)
 }
 
 static void
+switchDir(void)
+{
+	//printf("%s\n",text);
+	char* newPath=malloc(strlen(path)+strlen(text)+2);
+	strcpy(newPath,path);
+	strcat(newPath,"/");
+	strcat(newPath,text);
+	printf("%s\n",newPath);
+}
+
+static void
 keypress(XKeyEvent *ev)
 {
 	char buf[32];
@@ -463,6 +474,8 @@ keypress(XKeyEvent *ev)
 		strncpy(text, sel->text, sizeof text - 1);
 		text[sizeof text - 1] = '\0';
 		cursor = strlen(text);
+		if(sel->dir)
+			switchDir();
 		match();
 		break;
 	}
@@ -757,7 +770,7 @@ main(int argc, char *argv[])
 			usage();
 	
 	if(!path)
-		path=strdup("./");
+		path=strdup(".");
 
 	if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
 		fputs("warning: no locale support\n", stderr);
