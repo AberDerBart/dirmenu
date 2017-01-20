@@ -35,7 +35,7 @@ clean:
 dist: clean
 	@echo creating dist tarball
 	@mkdir -p dirmenu-${VERSION}
-	@cp LICENSE Makefile README arg.h config.def.h config.mk dmenu.1 \
+	@cp LICENSE Makefile README arg.h config.def.h config.mk dirmenu.1 \
 		drw.h util.h ${SRC} \
 		dirmenu-${VERSION}
 	@tar -cf dirmenu-${VERSION}.tar dirmenu-${VERSION}
@@ -49,13 +49,13 @@ install: all
 	@chmod 755 ${DESTDIR}${PREFIX}/bin/dirmenu
 	@echo installing manual pages to ${DESTDIR}${MANPREFIX}/man1
 	@mkdir -p ${DESTDIR}${MANPREFIX}/man1
-	@sed "s/VERSION/${VERSION}/g" < dmenu.1 > ${DESTDIR}${MANPREFIX}/man1/dmenu.1
-	@chmod 644 ${DESTDIR}${MANPREFIX}/man1/dmenu.1
+	@sed "s/VERSION/${VERSION}/g" < dirmenu.1 > ${DESTDIR}${MANPREFIX}/man1/dirmenu.1
+	@chmod 644 ${DESTDIR}${MANPREFIX}/man1/dirmenu.1
 
 uninstall:
 	@echo removing executables from ${DESTDIR}${PREFIX}/bin
 	@rm -f ${DESTDIR}${PREFIX}/bin/dirmenu
 	@echo removing manual page from ${DESTDIR}${MANPREFIX}/man1
-	@rm -f ${DESTDIR}${MANPREFIX}/man1/dmenu.1
+	@rm -f ${DESTDIR}${MANPREFIX}/man1/dirmenu.1
 
 .PHONY: all options clean dist install uninstall
