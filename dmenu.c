@@ -50,6 +50,7 @@ static struct item *items = NULL;
 static struct item *matches, *matchend;
 static struct item *prev, *curr, *next, *sel;
 static int mon = -1, screen;
+static char* path=NULL;
 
 static Atom clip, utf8;
 static Display *dpy;
@@ -103,6 +104,7 @@ cleanup(void)
 	XUngrabKey(dpy, AnyKey, AnyModifier, root);
 	for (i = 0; i < SchemeLast; i++)
 		free(scheme[i]);
+	free(path);
 	drw_free(drw);
 	XSync(dpy, False);
 	XCloseDisplay(dpy);
@@ -486,7 +488,7 @@ paste(void)
 static void
 getDirContent(void)
 {
-	DIR* dirp=opendir("./");
+	DIR* dirp=opendir(path);
 	char* filePath;
 
 	struct dirent* entry;
@@ -505,7 +507,7 @@ getDirContent(void)
 			die("cannot strdup %u bytes:", strlen(entry->d_name) + 1);
 
 		//check if file is a directory
-		filePath=malloc(strlen("./")+strlen(entry->d_name)+1);
+		filePath=malloc(strlen(path)+strlen(entry->d_name)+1);
 		strcpy(filePath,"./");
 		strcat(filePath,entry->d_name);
 		stat(filePath, &fileStat);
@@ -691,7 +693,7 @@ setup(void)
 static void
 usage(void)
 {
-	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor] [-d directory]\n"
 	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-db color] [-df color] [-w windowid]\n", stderr);
 	exit(1);
 }
@@ -733,14 +735,19 @@ main(int argc, char *argv[])
 			colors[SchemeSel][ColBg] = argv[++i];
 		else if (!strcmp(argv[i], "-sf"))  /* selected foreground color */
 			colors[SchemeSel][ColFg] = argv[++i];
-		else if (!strcmp(argv[i], "-db"))  /* selected background color */
+		else if (!strcmp(argv[i], "-db"))  /* directory background color */
 			colors[SchemeDir][ColBg] = argv[++i];
-		else if (!strcmp(argv[i], "-df"))  /* selected foreground color */
+		else if (!strcmp(argv[i], "-df"))  /* directory foreground color */
 			colors[SchemeDir][ColFg] = argv[++i];
 		else if (!strcmp(argv[i], "-w"))   /* embedding window id */
 			embed = argv[++i];
+		else if (!strcmp(argv[i], "-d"))   /* starting directory */
+			path = strdup(argv[++i]);
 		else
 			usage();
+	
+	if(!path)
+		path=strdup("./");
 
 	if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
 		fputs("warning: no locale support\n", stderr);
