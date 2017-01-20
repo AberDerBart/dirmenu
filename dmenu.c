@@ -307,6 +307,9 @@ switchDir(void)
 	strcpy(newPath,path);
 	strcat(newPath,"/");
 	strcat(newPath,text);
+
+	//TODO: check, if folder is accessible
+	
 	free(path);
 	path=newPath;
 	getDirContent();
@@ -451,6 +454,7 @@ keypress(XKeyEvent *ev)
 		break;
 	case XK_Return:
 	case XK_KP_Enter:
+		printf("%s/",path);
 		puts((sel && !(ev->state & ShiftMask)) ? sel->text : text);
 		if (!(ev->state & ControlMask)) {
 			cleanup();
