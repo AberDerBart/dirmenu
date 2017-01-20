@@ -308,13 +308,19 @@ switchDir(void)
 	strcat(newPath,"/");
 	strcat(newPath,text);
 
+	DIR* newDir=opendir(newPath);
+
 	//TODO: check, if folder is accessible
-	
-	free(path);
-	path=newPath;
-	getDirContent();
-	text[0]='\0';
-	cursor=0;
+	if(newDir){
+		closedir(newDir);
+		free(path);
+		path=newPath;
+		getDirContent();
+		text[0]='\0';
+		cursor=0;
+	}else{
+		fprintf(stderr,"Error\n");
+	}
 }
 
 static void
