@@ -52,7 +52,6 @@ static struct item *prev, *curr, *next, *sel;
 static int mon = -1, screen;
 static char* path=NULL;
 static int showHidden=0;
-static char* curDir=NULL;
 
 static Atom clip, utf8;
 static Display *dpy;
@@ -592,35 +591,6 @@ getDirContent(void)
 	lines = MIN(lines, i);
 
 	closedir(dirp);
-}
-
-static void
-readstdin(void)
-{
-	char buf[sizeof text], *p;
-	size_t i, imax = 0, size = 0;
-	unsigned int tmpmax = 0;
-
-	/* read each line from stdin and add it to the item list */
-	for (i = 0; fgets(buf, sizeof buf, stdin); i++) {
-		if (i + 1 >= size / sizeof *items)
-			if (!(items = realloc(items, (size += BUFSIZ))))
-				die("cannot realloc %u bytes:", size);
-		if ((p = strchr(buf, '\n')))
-			*p = '\0';
-		if (!(items[i].text = strdup(buf)))
-			die("cannot strdup %u bytes:", strlen(buf) + 1);
-		items[i].out = 0;
-		drw_font_getexts(drw->fonts, buf, strlen(buf), &tmpmax, NULL);
-		if (tmpmax > inputw) {
-			inputw = tmpmax;
-			imax = i;
-		}
-	}
-	if (items)
-		items[i].text = NULL;
-	inputw = items ? TEXTW(items[imax].text) : 0;
-	lines = MIN(lines, i);
 }
 
 static void
