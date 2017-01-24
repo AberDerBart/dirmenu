@@ -148,6 +148,7 @@ drawmenu(void)
 	drw_rect(drw, 0, 0, mw, mh, 1, 1);
 
 	if (prompt && *prompt) {
+		prefixw = TEXTW(prompt) - lrpad / 4;
 		drw_setscheme(drw, scheme[SchemeSel]);
 		x = drw_text(drw, x, 0, prefixw, bh, lrpad / 2, prompt, 0);
 	}
@@ -331,6 +332,9 @@ switchDir(void)
 		free(path);
 		path=newPath;
 		getDirContent();
+		if(prompt)
+			free(prompt);
+		prompt=strdup(text);
 		text[0]='\0';
 		cursor=0;
 	}else{
@@ -693,7 +697,6 @@ setup(void)
 		y = topbar ? 0 : wa.height - mh;
 		mw = wa.width;
 	}
-	prefixw = (prompt && *prompt) ? TEXTW(prompt) - lrpad / 4 : 0;
 	inputw = MIN(inputw, mw/3);
 	match();
 
