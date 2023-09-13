@@ -35,3 +35,6 @@ config.h
 # Debug files
 *.dSYM/
 *.su
+
+# nix files
+result
